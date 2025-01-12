@@ -1,7 +1,6 @@
-export class Res<T> {
+export class Res<T = undefined> {
   meta: {
     isSuccess: boolean;
-    code: number;
     message: string;
     totalItems?: number;
     totalPages?: number;
@@ -11,4 +10,5 @@ export class Res<T> {
     hasPrevious?: boolean;
   };
   data?: T;
+  access_token?: string;
 }

@@ -1,48 +1,32 @@
 import { IsNotEmpty, IsString, IsUUID, MinLength } from 'class-validator';
 
 export class User {
-  @IsUUID(4, {
-    message: 'Invalid user id',
-  })
-  @IsNotEmpty({
-    message: 'User id is required',
-  })
+  @IsUUID(4)
+  @IsNotEmpty()
   id: string;
 
-  @IsString({
-    message: 'Email should be a string',
-  })
-  @IsNotEmpty({
-    message: 'Email is required',
-  })
+  @IsString()
+  @IsNotEmpty()
   email: string;
 
-  @IsString({
-    message: 'Password should be a string',
-  })
-  @IsNotEmpty({
-    message: 'Password is required',
-  })
-  @MinLength(6, {
-    message: 'Password should be at least 6 characters long',
-  })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
   password: string;
 
-  @IsString({
-    message: 'First name should be a string',
-  })
-  @IsNotEmpty({
-    message: 'First name is required',
-  })
+  @IsString()
+  @IsNotEmpty()
   first_name: string;
 
-  @IsString({
-    message: 'Last name should be a string',
-  })
+  @IsString()
   last_name: string;
 
-  @IsString({
-    message: 'Role should be a string',
-  })
+  @IsString()
   role: string;
+
+  @IsString()
+  refresh_token?: string;
+
+  Posts?: any[];
+  Projects?: any[];
 }

@@ -1,5 +1,5 @@
 import { UserService } from './../user/user.service';
-import { HttpException, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, Inject, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
@@ -11,7 +11,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-    private UserService: UserService,
+    @Inject(forwardRef(() => UserService)) private userService: UserService,
     private bcrypt: BcryptService,
   ) {}
 
@@ -19,7 +19,7 @@ export class AuthService {
     newUser: Prisma.UserCreateInput,
   ): Promise<Omit<User, 'password'>> {
     // Check if the user already exists
-    const userExists = await this.UserService.findByEmail(newUser.email);
+    const userExists = await this.userService.findByEmail(newUser.email);
     if (userExists) {
       throw new HttpException(
         {
@@ -33,7 +33,6 @@ export class AuthService {
     }
     // Hash the password
     const hashPassword = await this.bcrypt.hash(newUser.password, 10);
-    console.log(hashPassword);
     // Create the user
     const user = await this.prisma.user.create({
       data: { ...newUser, password: hashPassword },
@@ -66,7 +65,7 @@ export class AuthService {
     data: Omit<User, 'password'>;
   }> {
     // Check if the user exists
-    const userExists = await this.UserService.findByEmail(email);
+    const userExists = await this.userService.findByEmail(email);
     if (!userExists) {
       throw new HttpException(
         {

@@ -59,6 +59,13 @@ export class UserService {
     return user ? user : null;
   }
 
+  async findByEmail(email: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+    return user;
+  }
+
   async create(
     newUser: Prisma.UserCreateInput,
   ): Promise<Omit<User, 'password'>> {
@@ -94,12 +101,5 @@ export class UserService {
     return await this.prisma.user.delete({
       where: { id },
     });
-  }
-
-  async findByEmail(email: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    return user;
   }
 }

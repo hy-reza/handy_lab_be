@@ -12,7 +12,7 @@ import { Res } from './../common/dto/res.dto';
 import { User } from '@prisma/client';
 import { LoginAuthDto } from './dto/login-auth.dto';
 
-@Controller('api/auth')
+@Controller('/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
   @Post('/register')

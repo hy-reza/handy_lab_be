@@ -18,15 +18,18 @@ import { User } from '@prisma/client';
 import { Res } from 'src/common/dto/res.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 // import { UpdateUserDto } from './dto/update-user.dto';
-@Controller('api/user')
+@Controller('/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
   async findAll(
-    @Query('page', new ValidationPipe({ transform: true })) page: number,
-    @Query('limit', new ValidationPipe({ transform: true })) limit: number,
-    @Query('query', new ValidationPipe({ transform: true })) query: string,
+    @Query('page')
+    page: number,
+    @Query('limit')
+    limit: number,
+    @Query('query')
+    query: string,
   ): Promise<Res<Omit<User, 'password'>[]>> {
     const { total: totalItems, users } = await this.userService.findAll(
       page,
@@ -50,7 +53,8 @@ export class UserController {
 
   @Get(':id')
   async findOne(
-    @Param('id', new ValidationPipe({ transform: true })) id: string,
+    @Param('id')
+    id: string,
   ) {
     const user = await this.userService.findOne(id);
     console.log({ user });
@@ -76,9 +80,11 @@ export class UserController {
 
   @Post()
   async create(
-    @Body(new ValidationPipe({ transform: true })) createUserDto: CreateUserDto,
+    @Body()
+    createUserDto: CreateUserDto,
   ) {
     const { passwordConf, ...user } = createUserDto;
+    const newUser = await this.userService.create(user);
     //password match
     if (createUserDto.password !== passwordConf) {
       throw new HttpException(
@@ -97,14 +103,16 @@ export class UserController {
         isSuccess: true,
         message: 'User created successfully!',
       },
-      data: await this.userService.create(user),
+      data: newUser,
     };
   }
 
   @Patch(':id')
   async update(
-    @Param('id', new ValidationPipe({ transform: true })) id: string,
-    @Body(new ValidationPipe({ transform: true })) updateUserDto: UpdateUserDto,
+    @Param('id')
+    id: string,
+    @Body(new ValidationPipe({ transform: true, whitelist: true }))
+    updateUserDto: UpdateUserDto,
   ) {
     const { passwordConf, ...user } = updateUserDto;
     //password match
@@ -142,7 +150,8 @@ export class UserController {
 
   @Delete(':id')
   async remove(
-    @Param('id', new ValidationPipe({ transform: true })) id: string,
+    @Param('id')
+    id: string,
   ) {
     const data = await this.userService.remove(id);
 

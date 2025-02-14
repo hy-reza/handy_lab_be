@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Post,
-  // Patch,
   Param,
   Delete,
   Get,
@@ -11,18 +10,24 @@ import {
   HttpException,
   HttpStatus,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '@prisma/client';
 import { Res } from 'src/common/dto/res.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Roles } from 'src/common/decorators/role-decorator/role-decorator.decorator';
+import { AuthGuard } from 'src/common/guards/auth-guard/auth-guard.guard';
+import { RoleGuard } from 'src/common/guards/role-guard/role-guard.guard';
 // import { UpdateUserDto } from './dto/update-user.dto';
 @Controller('/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async findAll(
     @Query('page')
     page: number,
@@ -52,6 +57,8 @@ export class UserController {
   }
 
   @Get(':id')
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async findOne(
     @Param('id')
     id: string,
@@ -79,6 +86,8 @@ export class UserController {
   }
 
   @Post()
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async create(
     @Body()
     createUserDto: CreateUserDto,
@@ -108,6 +117,8 @@ export class UserController {
   }
 
   @Patch(':id')
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async update(
     @Param('id')
     id: string,
@@ -149,6 +160,8 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Roles('admin')
+  @UseGuards(AuthGuard, RoleGuard)
   async remove(
     @Param('id')
     id: string,
